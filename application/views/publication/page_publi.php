@@ -1,0 +1,147 @@
+<!--
+Nom du fichier: page_publi.php
+Auteur: Julie STEPHANT
+Date de création: 12/04/23
+//_____________________________________________
+//_____________________________________________
+DESCRIPTION:
+Page des publications du club
+-->
+
+<section class="product spad">
+    <div class="container">
+
+    <div class="col-lg-8 col-md-8 col-sm-8">
+        <div class="section-title">
+            <h4>Publications</h4>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+
+<?php
+        // Si il n'y a encore aucune publication
+        if($publications == NULL){
+?>
+            <CENTER>
+            <h3>Aucune publication pour l'instant, revenez plus tard</h3>
+            </CENTER>
+            <br />
+<?php
+        }else{
+?>
+            <div class="trending__product">
+                <div class="row">             
+<?php
+                    // Pour chacune des publications publiques
+                    foreach($publications as $p){
+?>
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                            <div class="product__item">
+                        
+<?php
+                                if($p['pbl_img'] != NULL){ //si la publication a une image
+                                  
+                                    // Si la publication a une image
+                                    if(str_contains($p['pbl_img'], ".gif") ||
+                                    str_contains($p['pbl_img'], ".png") ||
+                                    str_contains($p['pbl_img'], ".jpg") ||
+                                    str_contains($p['pbl_img'], ".jpeg") ){
+?> 
+                                        <!-- affichage de l'image et du pseudo de l'utilisateur ayant posté la publication -->
+                                        <!-- openFullscreen permet de l'afficher en pleins écran quand l'image est cliquée -->
+                                        <div class="col-lg-8">
+                                            <div class="product__item__pic set-bg" data-setbg=<?php echo base_url()."style/img/publications/". $p['pbl_img']?> 
+                                            id="photo" onclick="openFullscreen(this)">
+                                                <div class="ep"><?php echo($p['pseudo']) ?> a publié</div>
+                                            </div>
+                                        </div>
+<?php
+                                    //Sinon si la publication a une video
+                                    }else if(str_contains($p['pbl_img'], ".mkv") ||
+                                    str_contains($p['pbl_img'], ".mp4") ||
+                                    str_contains($p['pbl_img'], ".avi") ||
+                                    str_contains($p['pbl_img'], ".mov") ){
+?>
+                                        <!-- pseudo de l'utilisateur ayant posté la publication -->
+                                        <div class="product__item__text">
+                                            <h6> <?php echo($p['pseudo']); ?> a publié </h6>
+                                        </div>
+                                        <br />
+                                        <div class="anime__video__player">
+                                            <!-- class="w-100" est là pour que la vidéo soit responsive -->
+                                            <video class="w-100"  playsinline controls>
+                                                <source src=<?php echo base_url()."style/img/publications/" . $p['pbl_img']?> />
+                                            </video>
+                                        </div>
+                       
+<?php
+                                    // Sinon c'est qu'elle n'a pas la bonne extension
+                                    }else{
+                                        echo("<p> Problème d'affichage </p>");
+                                        echo("<br />");
+                                        echo("<p> Le média n'a pas la bonne extension </p>");
+                                    }
+
+                                }else{
+?>                                  
+                                    <!-- pseudo de l'utilisateur ayant posté la publication -->
+                                    <div class="product__item__text">
+                                        <h6> <?php echo($p['pseudo']); ?> a écrit </h6>
+                                    </div>
+<?php
+                                }
+?>
+                                <div class="product__item__text">
+
+                                    <!-- description de la publication -->
+                                    <!-- (nl2br() permet de convertir les '\n' en balise <br /> ce qui permet de bien afficher les retours à la ligne) -->
+                                    <h5> <?php echo(nl2br($p['pbl_description'])); ?> </h5>
+
+<?php                               //affichage du nombre de likes et commentaires de la publication
+                                    foreach ($like as $l => $like_count) {
+                                        //On ne veut pas afficher tous les likes de toutes les publications sous chaque publi
+                                        //Quand l'id de la publication qu'on affiche match avec l'id dans le tableau like
+                                        //On affiche
+                                        if($p['pbl_id'] == $l){
+?>
+                                            <div class="heart"><i class="fa fa-heart"></i> <?php echo($like_count->nb_like);?></div>
+<?php                                        
+                                        }   
+                                    }
+                                   
+                                    foreach ($comment as $c => $comment_count) {
+                                        //On ne veut pas afficher tous les commentaires de toutes les publications sous chaque publi
+                                        //Quand l'id de la publication qu'on affiche match avec l'id dans le tableau comment
+                                        //On affiche
+                                        if($p['pbl_id'] == $c){
+?>
+                                            <div class="comment"><i class="fa fa-comment"></i> <?php echo($comment_count->nb_comment);?></div>
+<?php                                        
+                                        }   
+                                    }
+?>
+                                    <!-- date de la publication -->
+                                    <ul>
+                                        <li>Le <?php echo($p['date_publi']); ?></li>
+                                        <li>à <?php echo($p['heure_publi']); ?></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+<?php
+                    }
+?>
+
+                </div>
+            </div>
+            
+<?php
+        }
+?>
+    </div>
+</section>
+<div id="fullscreen-overlay" onclick="closeFullscreen()">
+  <img src="" alt="" id="fullscreen-image">
+</div>
